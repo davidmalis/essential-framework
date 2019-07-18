@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.essentialframework</groupId>
+  <artifactId>essential-starter</artifactId>
+  <version>0.0.1</version>
+  <packaging>pom</packaging>
+
+  <name>essential-starter</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+    
+    <java.version>1.8</java.version>
+   	
+    <!-- Versions -->
+    <version.essential-core>0.0.1</version.essential-core>
+    <version.essential-apt>1.0.0.RC-1</version.essential-apt>
+    
+    <version.sl4j-api>1.7.25</version.sl4j-api>
+    <version.logback-classic>1.2.3</version.logback-classic>
+    <version.javax.servlet-api>4.0.0</version.javax.servlet-api>
+    <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
+    
+  </properties>
+  
+  <dependencyManagement>
+  	<dependencies>
+		<dependency>
+			<groupId>org.essentialframework</groupId>
+			<artifactId>essential-core</artifactId>
+			<version>${version.essential-core}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>${version.sl4j-api}</version>
+		</dependency>
+		<dependency>
+		    <groupId>ch.qos.logback</groupId>
+		    <artifactId>logback-classic</artifactId>
+		    <version>${version.logback-classic}</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>${version.javax.servlet-api}</version>
+		</dependency>
+  	</dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+  	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	    <scope>provided</scope>
+	</dependency>
+  	<dependency>
+  		<groupId>org.essentialframework</groupId>
+  		<artifactId>essential-core</artifactId>
+  	</dependency>
+  	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-api</artifactId>
+	    <scope>compile</scope>
+	</dependency>
+	<dependency>
+	    <groupId>ch.qos.logback</groupId>
+	    <artifactId>logback-classic</artifactId>
+	</dependency>
+  </dependencies>
+  
+</project>
