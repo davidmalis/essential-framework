@@ -34,6 +34,28 @@ public class ClassGraphUtils {
 			 return classInfo.loadClasses();
 		 }
 	 }
+	 
+	 /**
+	  * TODO
+	  * @param iface
+	  * @param scanPackages
+	  * @return
+	  */
+	 public static List<Class<?>> getSubclasses(final Class<?> iface, String... scanPackages){
+		 Assert.notNull(iface, "Parent class must not be null");
+		 final ClassGraph classGraph = new ClassGraph()
+				.enableAnnotationInfo()
+				.enableClassInfo()
+				.whitelistPackages(scanPackages);
+		 
+		 try( ScanResult scan = classGraph.scan() ){
+			 
+			 ClassInfoList classInfo = scan.getClassesImplementing(iface.getName());
+			 return classInfo.loadClasses();
+			 
+		 }
+			
+	 }
 	
 	/**
 	 * No instantiation.

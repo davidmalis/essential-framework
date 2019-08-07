@@ -47,14 +47,14 @@ public class DefaultRequestHandlerRegistry implements RequestHandlerRegistry {
 	private Map<HttpMethod, Map<String, HandlerMethod>> handlers = 
 		new ConcurrentHashMap<>();
 	
-	private BeanFactory bf;
+	private BeanFactory beanFactory;
 	
 	/**
 	 * @throws AmbiguousHandlerException 
 	 * 
 	 */
 	DefaultRequestHandlerRegistry(BeanFactory bf, String... scanPackages) throws AmbiguousHandlerException {
-		this.bf = bf;
+		this.beanFactory = bf;
 		
 		final Iterator<Class<?>> it 
 			= ClassGraphUtils.getAnnotated(Controller.class, scanPackages).iterator();
@@ -74,8 +74,8 @@ public class DefaultRequestHandlerRegistry implements RequestHandlerRegistry {
 			return;
 		}
 		
-		for(Method m : handlersClass.getMethods()){
-			final RequestHandler handlerAnnotation = m.getAnnotation(RequestHandler.class);
+		for(Method method : handlersClass.getMethods()){
+			final RequestHandler handlerAnnotation = method.getAnnotation(RequestHandler.class);
 			if(handlerAnnotation != null) {
 				final HttpMethod httpMethod = handlerAnnotation.method();
 				final String url = handlerAnnotation.url();
@@ -89,7 +89,7 @@ public class DefaultRequestHandlerRegistry implements RequestHandlerRegistry {
 					}
 					throw new AmbiguousHandlerException("Ambigiuous request handler found for url: "+url);
 				}
-				urlMap.put(url, new AnnotatedHandlerMethod(m, handlersClass));
+				urlMap.put(url, AnnotatedHandlerMethod.of(method));
 			}
 		}
 		
@@ -120,7 +120,7 @@ public class DefaultRequestHandlerRegistry implements RequestHandlerRegistry {
 		
 		return (HandlerMethod) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), 
 				new Class<?>[] {HandlerMethod.class}, 
-			new AnnotatedHandlerMethodInvocationHandler(bf, (AnnotatedHandlerMethod) method));
+			new AnnotatedHandlerMethodInvocationHandler(beanFactory, (AnnotatedHandlerMethod) method));
 		
 	}
 }

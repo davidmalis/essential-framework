@@ -112,7 +112,12 @@ public abstract class GenericScopedBeanFactory
 		final List<Object> args = getParameterInstancesForBeanConstruction(c.getParameters());
 		
 		try {
-			return c.newInstance(args.toArray());
+			
+			T instance = c.newInstance(args.toArray());
+			
+			handleBeanFactoryAware(instance);
+			
+			return instance;
 		
 		} catch ( InstantiationException 
 				| IllegalAccessException 
@@ -214,4 +219,11 @@ public abstract class GenericScopedBeanFactory
 		}
 	}
 
+	protected Object handleBeanFactoryAware(Object object) {
+		if(object instanceof BeanFactoryAware) {
+			LOGGER.debug("Injecting BeanFactory to the BeanFactoryAware object of type {}", object.getClass());
+			((BeanFactoryAware) object).setBeanFactory(this);
+		}
+		return object;
+	}
 }

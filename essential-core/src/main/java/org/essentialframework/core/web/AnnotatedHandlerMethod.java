@@ -28,6 +28,9 @@ import java.lang.reflect.Parameter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.essentialframework.core.annotation.Alias;
+import org.essentialframework.core.utility.Assert;
+
 /**
  * TODO
  * @author David Malis
@@ -45,15 +48,27 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 	
 	private Class<?> returnType;
 	
-	public AnnotatedHandlerMethod(Method m, Class<?> methodOwnerType) {
-		this.methodOwnerType = methodOwnerType;
-		this.method = m;
+	
+	static AnnotatedHandlerMethod of(final Method method) {
+		Assert.notNull(method, "Method cannot be null");
+		return new AnnotatedHandlerMethod(method);
+		
+	}
+	
+	private AnnotatedHandlerMethod(final Method method) {
+		this.method = method;
+		this.methodOwnerType = this.method.getDeclaringClass();
+		if(this.methodOwnerType.isAnnotationPresent(Alias.class)) {
+			this.methodOwnerName = this.methodOwnerType.getAnnotation(Alias.class).value();
+		}
+		this.parameters = this.method.getParameters();
+		this.returnType = this.method.getReturnType();
 	}
 
 	
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println(request);
+		//no-op, proxy is handling this
 	}
 
 
@@ -105,7 +120,5 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 	public void setReturnType(Class<?> returnType) {
 		this.returnType = returnType;
 	}
-	
-	
 
 }
