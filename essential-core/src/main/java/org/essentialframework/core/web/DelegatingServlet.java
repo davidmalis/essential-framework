@@ -25,6 +25,7 @@ package org.essentialframework.core.web;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +51,9 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 	
 	public static final String JAVAX_INCLUDE_REQUEST_URI_ATTRIBUTE = 
 		"javax.servlet.include.request_uri";
+	
+	public static final String BEAN_FACTORY_ATTRIBUTE = 
+		DelegatingServlet.class.getName() + ".beans.beanfactory";
 
 	private BeanFactory beanFactory;
 	
@@ -101,6 +105,7 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 			HttpServletResponse response, HandlerMethod handler) {
 		
 		RequestContextHolder.setRequestContext(new ServletRequestContext(request, response));
+		registerBeanFactory(request);
 		
 		try {
 			
@@ -172,6 +177,12 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 	
 	public BeanFactory getBeanFactory() {
 		return this.beanFactory;
+	}
+	
+	private void registerBeanFactory(ServletRequest request) {
+		if(this.beanFactory != null) {
+			request.setAttribute(BEAN_FACTORY_ATTRIBUTE, this.beanFactory);
+		}
 	}
 	
 }

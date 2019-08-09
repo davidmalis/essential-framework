@@ -13,6 +13,9 @@ import org.essentialframework.core.web.RequestContextHolder;
 public class RequestContextInvocationHandler<T>
 	implements InvocationHandler {
 	
+	private static final String ATTRIBUTE_PREFIX = 
+		RequestContextInvocationHandler.class.getName() + ".beans.";
+	
 	private GenericScopedBeanFactory scopedBeanFactory;
 	
 	private BeanDefinition<T> targetDefinition;
@@ -82,9 +85,7 @@ public class RequestContextInvocationHandler<T>
 	}
 	
 	private static final String getBeanAttributeName(BeanDefinition<?> definition) {
-		StringBuilder sb = new StringBuilder("#_essentialframework_BEAN#_");
-		sb.append(definition.getScope().name());
-		sb.append("#");
+		StringBuilder sb = new StringBuilder(ATTRIBUTE_PREFIX);
 		sb.append(definition.getBeanName());
 		return sb.toString();
 	}

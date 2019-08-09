@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.essentialframework.core.initialization.BeanFactory;
+import org.essentialframework.core.web.bind.MethodArgumentBinder;
 
 public class AnnotatedHandlerMethodInvocationHandler 
 	implements InvocationHandler {
@@ -29,11 +30,14 @@ public class AnnotatedHandlerMethodInvocationHandler
 
 		final HttpServletRequest request = RequestContextHolder.currentRequestContext().getRequest();
 		final HttpServletResponse response = RequestContextHolder.currentRequestContext().getResponse();
+		final MethodArgumentBinder argumentBinder = ((ReflectiveMethodProvider) handlerMethod).getArgumentBinder();
 		final ResponseWriter responseWriter = new ResponseWriter();
 		
 		Object handlerMethodInvocationResult;
 		final Class<?> handlerMethodOwnerType = handlerMethod.getMethodOwnerType();
 		final Object handlerMethodOwner = beanFactory.getBean(handlerMethodOwnerType);
+		
+		Object[] boundArguments = argumentBinder.bind();
 
 		/* NOTE:
 		 * At this point, if we are already dealing with the proxy
@@ -44,19 +48,44 @@ public class AnnotatedHandlerMethodInvocationHandler
 		if(Proxy.isProxyClass(handlerMethodOwner.getClass())) {
 			
 			handlerMethodInvocationResult = Proxy.getInvocationHandler(handlerMethodOwner).invoke(handlerMethodOwner, 
-				handlerMethod.getMethod(), args);
+				handlerMethod.getMethod(), boundArguments);
 			
 		} else {
-			handlerMethodInvocationResult = handlerMethod.getMethod().invoke(handlerMethodOwner, args);
+			handlerMethodInvocationResult = handlerMethod.getMethod().invoke(
+				handlerMethodOwner,	boundArguments);
 		}
 
-		
 		responseWriter.setPayload(handlerMethodInvocationResult);
 		responseWriter.write(request, response);
 		
 		//---
 		return handlerMethodInvocationResult;
 		
+		
 	}
+	
+	
+//	List<Object> bindArguments(HttpServletRequest request, HttpServletResponse response, AnnotatedHandlerMethod handlerMethod){
+//		
+//		final List<Object> boundArguments = new ArrayList<>();
+//		for(Parameter parameter : handlerMethod.getParameters()) {
+//			if(HttpServletRequest.class.equals(parameter.getType())) {
+//				boundArguments.add(request);
+//			}
+//			else if(HttpServletResponse.class.equals(parameter.getType())) {
+//				boundArguments.add(response);
+//			} else {
+//				boundArguments.add(null);
+//			}
+//		}
+//		return boundArguments;
+//		
+//	}
+//	
+//	
+	
+	
+	
+	
 
 }

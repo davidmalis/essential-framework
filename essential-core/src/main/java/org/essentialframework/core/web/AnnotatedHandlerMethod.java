@@ -30,13 +30,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.essentialframework.core.annotation.Alias;
 import org.essentialframework.core.utility.Assert;
+import org.essentialframework.core.web.bind.DefaultRequestContextBasedMethodArgumentBinder;
+import org.essentialframework.core.web.bind.MethodArgumentBinder;
 
 /**
  * TODO
  * @author David Malis
  * @version 1.0
  */
-public class AnnotatedHandlerMethod implements HandlerMethod {
+public class AnnotatedHandlerMethod implements HandlerMethod, ReflectiveMethodProvider {
 	
 	private String methodOwnerName;
 	
@@ -48,6 +50,7 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 	
 	private Class<?> returnType;
 	
+	private MethodArgumentBinder argumentBinder;
 	
 	static AnnotatedHandlerMethod of(final Method method) {
 		Assert.notNull(method, "Method cannot be null");
@@ -63,6 +66,7 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 		}
 		this.parameters = this.method.getParameters();
 		this.returnType = this.method.getReturnType();
+		this.argumentBinder = new DefaultRequestContextBasedMethodArgumentBinder(this);
 	}
 
 	
@@ -90,7 +94,7 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 		this.methodOwnerType = methodOwnerType;
 	}
 
-
+	@Override
 	public Method getMethod() {
 		return method;
 	}
@@ -118,6 +122,11 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 
 	public void setReturnType(Class<?> returnType) {
 		this.returnType = returnType;
+	}
+
+	@Override
+	public MethodArgumentBinder getArgumentBinder() {
+		return this.argumentBinder;
 	}
 
 }

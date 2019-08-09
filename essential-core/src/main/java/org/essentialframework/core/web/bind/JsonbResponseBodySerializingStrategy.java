@@ -1,4 +1,4 @@
-package org.essentialframework.core.web;
+package org.essentialframework.core.web.bind;
 
 import java.io.IOException;
 import java.io.PrintWriter;

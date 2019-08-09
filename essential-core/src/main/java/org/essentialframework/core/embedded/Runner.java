@@ -23,7 +23,7 @@ public class Runner {
 		final ServletHandler servletHandler = new ServletHandler();
 		servletHandler.addServletWithMapping(new ServletHolder(
 	        	new DelegatingServlet(context)), "/*");
-
+		
 		server.setHandler(servletHandler);
 		
 		enableSessionManagement(server, servletHandler);
