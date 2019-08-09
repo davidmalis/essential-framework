@@ -134,13 +134,13 @@ public abstract class WrappingProxyBeanFactory
 			return null;
 		}
 		if(definition.getInterfaces().length == 0) {
-			LOGGER.debug("Target {} does not implement any applicable interface. Serving direct instance.",
-				target);
+			LOGGER.debug("Bean '{}' does not implement any applicable interface. Serving direct instance.",
+				definition.getBeanName());
 			return target;
 		}
 		Object wrapper = null;
 		for(Class<? extends AbstractTargetAwareInvocationHandler> handlerType : handlerTypes) {
-			LOGGER.trace("Wrapping target with the {} proxy", handlerType);
+			LOGGER.trace("Wrapping bean '{}' with the '{}' proxy", definition.getBeanName(), handlerType);
 			wrapper = Proxy.newProxyInstance(
 				Thread.currentThread().getContextClassLoader(),
 				definition.getInterfaces(), 

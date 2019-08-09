@@ -68,7 +68,6 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 	
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response) {
-		//no-op, proxy is handling this
 	}
 
 

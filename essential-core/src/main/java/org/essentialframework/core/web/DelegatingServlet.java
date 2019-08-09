@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.essentialframework.core.initialization.BeanFactory;
+import org.essentialframework.core.initialization.BeanFactoryAware;
 import org.essentialframework.core.utility.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author David Malis
  * @version 1.0
  */
-public class DelegatingServlet extends HttpServlet {
+public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 
 	private static final long serialVersionUID = 
 		-4303621952406227515L;
@@ -73,13 +74,9 @@ public class DelegatingServlet extends HttpServlet {
 		Assert.notNull(beanFactory, "BeanFactory must not be null");
 		Assert.notNull(handlerRegistry, "RequestHandlerRegistry must not be null");
 		
-//		GenericScopedBeanFactory gsbf = ((GenericScopedBeanFactory)beanFactory); 
-//		gsbf.registerSingletonInstance(this);
-//		gsbf.registerSingletonInstance(requestHandlerRegistry);
-		
 		this.beanFactory = beanFactory;
 		this.requestHandlerRegistry = handlerRegistry;
-		
+
 	}
 	
 	private static String getRequestUri(HttpServletRequest request) {
@@ -108,7 +105,7 @@ public class DelegatingServlet extends HttpServlet {
 		try {
 			
 			handler.handle(request, response);
-		
+			
 		} catch(Throwable e) {
 			//TODO
 			LOGGER.error("Servlet error: {}",e);
@@ -167,6 +164,14 @@ public class DelegatingServlet extends HttpServlet {
 		
 		delegate(request, response, handler);
 	}
+
+	@Override
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
 	
+	public BeanFactory getBeanFactory() {
+		return this.beanFactory;
+	}
 	
 }

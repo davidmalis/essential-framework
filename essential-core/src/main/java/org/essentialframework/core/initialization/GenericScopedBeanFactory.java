@@ -106,7 +106,7 @@ public abstract class GenericScopedBeanFactory
 		return (T) singletons.get(name);
 	}
 	
-	private <T> T newInstance(final BeanDefinition<T> definition) {
+	<T> T newInstance(final BeanDefinition<T> definition) {
 		
 		final Constructor<T> c = definition.getConstructorCandidate();
 		final List<Object> args = getParameterInstancesForBeanConstruction(c.getParameters());
@@ -116,6 +116,7 @@ public abstract class GenericScopedBeanFactory
 			T instance = c.newInstance(args.toArray());
 			
 			handleBeanFactoryAware(instance);
+			handleWiredFields(instance);
 			
 			return instance;
 		
@@ -130,24 +131,27 @@ public abstract class GenericScopedBeanFactory
 		}
 	}
 	
-	protected <T> void setWiredFields(T instance, Field... fields) {
-//	TODO
-//		for(Field f : fields) {
-//			try {
-//				Class<?> fieldType = f.getType();
-//				boolean wasAccessible = f.isAccessible();
-//				f.setAccessible(true);
-//					
-//				
-//				f.set(instance, getBean0);
-//				
-//				f.setAccessible(wasAccessible);
-//				
-//			} catch (Exception e) {
-//				
-//			}
-//		}
-//		
+	protected <T> void handleWiredFields(T instance) {
+		for(Field field : BeanDefinitionUtils.findWiredFields(instance.getClass())) {
+			try {
+
+				BeanDefinition<?> definition;
+				final Alias alias = field.getAnnotation(Alias.class);
+				if(alias != null) {
+					definition = getBeanDefinitionFor(alias.value());
+				} else {
+					definition = getBeanDefinitionFor(field.getType());
+				}
+				
+				boolean wasAccessible = field.isAccessible();
+				field.setAccessible(true);
+				field.set(instance, getInstanceFor(definition));
+				field.setAccessible(wasAccessible);
+				
+			} catch (Exception e) {
+				LOGGER.error("Failed to handle wired fields");
+			}
+		}
 	}
 	
 	protected BeanDefinition<?> getBeanDefinitionFor(final AnnotatedElement element){
@@ -203,7 +207,7 @@ public abstract class GenericScopedBeanFactory
 				return (T)Proxy.newProxyInstance(
 					Thread.currentThread().getContextClassLoader(), 
 					definition.getInterfaces(), 
-					new RequestContextInvocationHandler<>(definition));
+					new RequestContextInvocationHandler<>(this, definition));
 			
 			default:	
 			case SINGLETON:

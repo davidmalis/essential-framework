@@ -50,11 +50,11 @@ public class MethodInvocationLoggingHandler
 	 */
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		LOGGER.debug("Invoking method: {}", method.getName());
-		final long start = System.nanoTime();
+		LOGGER.debug("Invoking method: {}" , method.getDeclaringClass()+"."+method.getName());
+		final long start = System.currentTimeMillis();
 		Object result = method.invoke(target, args);
 		LOGGER.debug("Method {} finished in {} ms", 
-				method.getName(), (System.nanoTime()-start)/1000 );
+				method.getDeclaringClass()+"."+method.getName(), (System.currentTimeMillis()-start) );
 		return result;
 	}
 
