@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.essentialframework.core.initialization.BeanFactory;
-import org.essentialframework.core.web.bind.MethodArgumentBinder;
+import org.essentialframework.core.web.databind.MethodArgumentBinder;
 
 public class AnnotatedHandlerMethodInvocationHandler 
 	implements InvocationHandler {
@@ -30,7 +30,7 @@ public class AnnotatedHandlerMethodInvocationHandler
 
 		final HttpServletRequest request = RequestContextHolder.currentRequestContext().getRequest();
 		final HttpServletResponse response = RequestContextHolder.currentRequestContext().getResponse();
-		final MethodArgumentBinder argumentBinder = ((ReflectiveMethodProvider) handlerMethod).getArgumentBinder();
+		final MethodArgumentBinder argumentBinder = ((MethodWrapper) handlerMethod).getArgumentBinder();
 		final ResponseWriter responseWriter = new ResponseWriter();
 		
 		Object handlerMethodInvocationResult;

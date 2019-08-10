@@ -30,15 +30,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.essentialframework.core.annotation.Alias;
 import org.essentialframework.core.utility.Assert;
-import org.essentialframework.core.web.bind.DefaultRequestContextBasedMethodArgumentBinder;
-import org.essentialframework.core.web.bind.MethodArgumentBinder;
+import org.essentialframework.core.web.databind.DefaultRequestContextMethodArgumentBinder;
+import org.essentialframework.core.web.databind.MethodArgumentBinder;
 
 /**
  * TODO
  * @author David Malis
  * @version 1.0
  */
-public class AnnotatedHandlerMethod implements HandlerMethod, ReflectiveMethodProvider {
+public class AnnotatedHandlerMethod implements HandlerMethod, MethodWrapper {
 	
 	private String methodOwnerName;
 	
@@ -66,7 +66,7 @@ public class AnnotatedHandlerMethod implements HandlerMethod, ReflectiveMethodPr
 		}
 		this.parameters = this.method.getParameters();
 		this.returnType = this.method.getReturnType();
-		this.argumentBinder = new DefaultRequestContextBasedMethodArgumentBinder(this);
+		this.argumentBinder = new DefaultRequestContextMethodArgumentBinder(this);
 	}
 
 	

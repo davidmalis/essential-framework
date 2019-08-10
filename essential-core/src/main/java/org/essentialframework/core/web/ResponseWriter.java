@@ -4,8 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.http.HttpStatus;
-import org.essentialframework.core.web.bind.JsonbResponseBodySerializingStrategy;
-import org.essentialframework.core.web.bind.ResponseBodySerializingStrategy;
+import org.essentialframework.core.web.databind.JsonbResponseBodySerializingStrategy;
+import org.essentialframework.core.web.databind.ResponseBodySerializingStrategy;
 
 public class ResponseWriter {
 	

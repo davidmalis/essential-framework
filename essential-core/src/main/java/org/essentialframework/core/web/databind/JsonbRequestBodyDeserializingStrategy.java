@@ -1,10 +1,9 @@
-package org.essentialframework.core.web.bind;
+package org.essentialframework.core.web.databind;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
 import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
 import javax.json.bind.JsonbException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,7 +27,7 @@ public class JsonbRequestBodyDeserializingStrategy
 			reader = request.getReader();
 			if(reader != null && reader.ready()) {
 				result = JsonbBuilder.create().fromJson(reader, 
-						type != null ? Object.class : type);
+						type == null ? Object.class : type);
 			}
 			
 		} catch(JsonbException e) {

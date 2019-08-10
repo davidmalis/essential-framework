@@ -1,4 +1,4 @@
-package org.essentialframework.core.web.bind;
+package org.essentialframework.core.web.databind;
 
 import javax.servlet.http.HttpServletResponse;
 
