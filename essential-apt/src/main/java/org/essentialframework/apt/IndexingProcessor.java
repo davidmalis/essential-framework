@@ -25,8 +25,6 @@ import static org.essentialframework.apt.IndexFilePrefix.ANNOTATION_INDEXES;
 import static org.essentialframework.apt.IndexFilePrefix.SUPERCLASS_INDEXES;
 
 import java.lang.annotation.Annotation;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +43,6 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementScanner8;
 import javax.tools.Diagnostic;
-import javax.tools.StandardLocation;
 
 /**
  * This processor is registered and started at compile-time through {@code ServiceLoader}. 

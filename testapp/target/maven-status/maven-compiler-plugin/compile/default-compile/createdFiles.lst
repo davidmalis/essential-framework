@@ -1,0 +1,6 @@
+org\essentialframework\testapp\App.class
+org\essentialframework\testapp\Testing.class
+org\essentialframework\testapp\TestController.class
+org\essentialframework\testapp\TestDaoImpl.class
+org\essentialframework\testapp\TestService.class
+org\essentialframework\testapp\TestDao.class

@@ -4,7 +4,7 @@
 
   <groupId>org.essentialframework</groupId>
   <artifactId>essential-starter</artifactId>
-  <version>0.0.1</version>
+  <version>1.0.0-rc1</version>
   <packaging>pom</packaging>
 
   <name>essential-starter</name>
@@ -12,18 +12,14 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <failOnMissingWebXml>false</failOnMissingWebXml>
-    
     <java.version>1.8</java.version>
-   	
-    <!-- Versions -->
-    <version.essential-core>0.0.1</version.essential-core>
-    <version.essential-apt>1.0.0.RC-1</version.essential-apt>
-    
-    <version.sl4j-api>1.7.25</version.sl4j-api>
-    <version.logback-classic>1.2.3</version.logback-classic>
-    <version.javax.servlet-api>4.0.0</version.javax.servlet-api>
-    <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
-    
+    <essentialframework.version>1.0.0-rc1</essentialframework.version>
+    <sl4j-api.version>1.7.25</sl4j-api.version>
+    <logback-classic.version>1.2.3</logback-classic.version>
+    <javax.servlet-api.version>4.0.0</javax.servlet-api.version>
+    <maven-compiler-pluginversion>3.8.1</maven-compiler-pluginversion>
+    <yasson.version>1.0</yasson.version>
+    <javax.json.version>1.1</javax.json.version>
   </properties>
   
   <dependencyManagement>
@@ -31,22 +27,37 @@
 		<dependency>
 			<groupId>org.essentialframework</groupId>
 			<artifactId>essential-core</artifactId>
-			<version>${version.essential-core}</version>
+			<version>${essentialframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.essentialframework</groupId>
+			<artifactId>essential-web</artifactId>
+			<version>${essentialframework.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-api</artifactId>
-		    <version>${version.sl4j-api}</version>
+		    <version>${sl4j-api.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>ch.qos.logback</groupId>
 		    <artifactId>logback-classic</artifactId>
-		    <version>${version.logback-classic}</version>
+		    <version>${logback-classic.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>javax.servlet-api</artifactId>
-		    <version>${version.javax.servlet-api}</version>
+		    <version>${javax.servlet-api.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.eclipse</groupId>
+    		<artifactId>yasson</artifactId>
+    		<version>${yasson.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish</groupId>
+		    <artifactId>javax.json</artifactId>
+		    <version>${javax.json.version}</version>
 		</dependency>
   	</dependencies>
   </dependencyManagement>
@@ -62,6 +73,10 @@
   		<artifactId>essential-core</artifactId>
   	</dependency>
   	<dependency>
+  		<groupId>org.essentialframework</groupId>
+  		<artifactId>essential-web</artifactId>
+  	</dependency>
+  	<dependency>
 	    <groupId>org.slf4j</groupId>
 	    <artifactId>slf4j-api</artifactId>
 	    <scope>compile</scope>
@@ -69,6 +84,14 @@
 	<dependency>
 	    <groupId>ch.qos.logback</groupId>
 	    <artifactId>logback-classic</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.eclipse</groupId>
+   		<artifactId>yasson</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.glassfish</groupId>
+	    <artifactId>javax.json</artifactId>
 	</dependency>
   </dependencies>
   

@@ -22,7 +22,6 @@
 */
 package org.essentialframework.core.initialization;
 import org.essentialframework.core.annotation.Scope;
-import org.essentialframework.core.utility.StringUtils;
 
 /**
  * Possible scopes of a bean. Should be specified via {@link Scope}

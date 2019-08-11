@@ -2,6 +2,7 @@ package org.essentialframework.core.initialization;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
@@ -106,7 +107,7 @@ public abstract class GenericScopedBeanFactory
 		return (T) singletons.get(name);
 	}
 	
-	<T> T newInstance(final BeanDefinition<T> definition) {
+	public <T> T newInstance(final BeanDefinition<T> definition) {
 		
 		final Constructor<T> c = definition.getConstructorCandidate();
 		final List<Object> args = getParameterInstancesForBeanConstruction(c.getParameters());
@@ -207,7 +208,7 @@ public abstract class GenericScopedBeanFactory
 				return (T)Proxy.newProxyInstance(
 					Thread.currentThread().getContextClassLoader(), 
 					definition.getInterfaces(), 
-					new RequestContextInvocationHandler<>(this, definition));
+					getRequestContextInvocationHandler(definition));
 			
 			default:	
 			case SINGLETON:
@@ -230,4 +231,29 @@ public abstract class GenericScopedBeanFactory
 		}
 		return object;
 	}
+	
+	private InvocationHandler getRequestContextInvocationHandler(
+			BeanDefinition<?> beanDefinition) {
+		
+		Class<?> requestContextInvocationHandlerClass = null;
+		try {
+			requestContextInvocationHandlerClass = 
+				Class.forName("org.essentialframework.web.RequestContextInvocationHandler");
+			
+			return (InvocationHandler) requestContextInvocationHandlerClass
+					.getConstructor(GenericScopedBeanFactory.class, BeanDefinition.class)
+					.newInstance(this, beanDefinition);
+			
+		} catch(ClassNotFoundException e) {
+			throw new BeanFactoryException("RequestContextInvocationHandler is not found on classpath. "
+					+ " Cannot instantiate a proxy for a web-scoped bean "+ 
+						beanDefinition.getBeanName());
+
+		} catch(Throwable t) {
+			throw new BeanFactoryException("Cannot instantiate a RequestContextInvocationHandler proxy for "
+					+ "web-scoped bean"+beanDefinition.getBeanName(), t);
+		}
+		
+	}
+	
 }

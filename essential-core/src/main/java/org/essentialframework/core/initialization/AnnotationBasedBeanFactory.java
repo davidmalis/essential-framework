@@ -25,8 +25,6 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.ServletContext;
-
 import org.essentialframework.core.annotation.Component;
 import org.essentialframework.core.annotation.Controller;
 import org.essentialframework.core.annotation.Repository;
@@ -38,9 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link BeanFactory} implementation built upon {@link GenericScopedBeanFactory} 
  * and {@link WrappingProxyBeanFactory} which supplies main dependency injection 
- * features of the framework. Instantiation of this component is typically done 
- * in the {@link ApplicationInitializer} implementation and must be registered in 
- * the supplied {@link ServletContext}. Factory registers itself as a bean so it
+ * features of the framework. Factory registers itself as a bean so it
  * can be injected via dependency injection.
  * 
  * @author David Malis
