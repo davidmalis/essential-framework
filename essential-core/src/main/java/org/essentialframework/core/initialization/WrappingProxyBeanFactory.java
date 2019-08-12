@@ -64,7 +64,10 @@ public abstract class WrappingProxyBeanFactory
 	 */
 	public WrappingProxyBeanFactory addHandlerType(Class<? extends AbstractTargetAwareInvocationHandler> type) {
 		if(type != null) {
-			LOGGER.debug("Adding proxy invocation handler: {}", type);
+			
+			if( LOGGER.isDebugEnabled() ) {
+				LOGGER.debug("Adding {} bean proxy invocation handler", type.getSimpleName());
+			}
 			handlerTypes.add(type);
 		}
 		return this;
@@ -134,13 +137,22 @@ public abstract class WrappingProxyBeanFactory
 			return null;
 		}
 		if(definition.getInterfaces().length == 0) {
-			LOGGER.debug("Bean '{}' does not implement any applicable interface. Serving direct instance.",
-				definition.getBeanName());
+			
+			if( LOGGER.isDebugEnabled() ) {
+				LOGGER.debug("Bean {} does not implement any applicable interface. Serving direct instance.",
+						definition.getBeanName());
+			}
+			
 			return target;
 		}
 		Object wrapper = null;
 		for(Class<? extends AbstractTargetAwareInvocationHandler> handlerType : handlerTypes) {
-			LOGGER.trace("Wrapping bean '{}' with the '{}' proxy", definition.getBeanName(), handlerType);
+
+			if( LOGGER.isTraceEnabled() ) {
+				LOGGER.trace("Wrapping bean '{}' with the '{}' proxy", 
+						definition.getBeanName(), handlerType.getSimpleName());
+			}
+			
 			wrapper = Proxy.newProxyInstance(
 				Thread.currentThread().getContextClassLoader(),
 				definition.getInterfaces(), 

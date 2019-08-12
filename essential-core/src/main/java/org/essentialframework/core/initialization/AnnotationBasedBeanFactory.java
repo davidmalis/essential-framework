@@ -23,7 +23,6 @@
 package org.essentialframework.core.initialization;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.List;
 
 import org.essentialframework.core.annotation.Component;
 import org.essentialframework.core.annotation.Controller;
@@ -48,24 +47,26 @@ public class AnnotationBasedBeanFactory
 	private static final Logger LOGGER 
 		= LoggerFactory.getLogger(AnnotationBasedBeanFactory.class);
 
-	private static final List<Class<? extends Annotation>> BEAN_ANNOTATIONS 
-		= Arrays.asList( Controller.class,
-						 Service.class, 
-						 Repository.class, 
-						 Component.class   
-	);
-	
 	private String[] scanPackages;
 	
 	public AnnotationBasedBeanFactory(boolean lazy, String... scanPackages) {
+		LOGGER.warn("Instantiating framework context...");
 		
 		this.scanPackages = scanPackages;
 		
-		LOGGER.info("Registering bean definitions on the {} bean factory", 
-				lazy ? "lazy" : "");
-		BEAN_ANNOTATIONS.forEach(this::registerAnnotatedBeans);
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Registering bean definitions on the {} bean factory", lazy ? "lazy" : "");
+		}
+				
+		Arrays.asList( 
+			Controller.class,
+			Service.class, 
+			Repository.class, 
+			Component.class)
+		.forEach(this::registerAnnotatedBeans);
 		
 		if( !lazy ) {
+			LOGGER.debug("Instantiating singletons eagerly");
 			instantiateSingletons();
 		}
 	}

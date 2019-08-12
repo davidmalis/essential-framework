@@ -1,4 +1,3 @@
-package org.essentialframework.web.annotation;
 /* MIT License
 *
 * Copyright (c) 2018 David Mališ
@@ -21,6 +20,7 @@ package org.essentialframework.web.annotation;
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
+package org.essentialframework.web.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

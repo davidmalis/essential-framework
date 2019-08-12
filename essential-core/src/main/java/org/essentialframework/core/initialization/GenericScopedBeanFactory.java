@@ -1,5 +1,26 @@
+/* MIT License
+*
+* Copyright (c) 2018 David Mališ
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
 package org.essentialframework.core.initialization;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -58,6 +79,11 @@ public abstract class GenericScopedBeanFactory
 				"if you are already using @Alias, check specified names.");
 		}
 		
+		if( LOGGER.isDebugEnabled() ){
+			LOGGER.debug("Registering definition for '{}' of type {} ", 
+					definition.getBeanName(), definition.getType());
+		}
+		
 		beanDefinitions.put(definition.getBeanName(), definition);
 		registerNameFor(type, definition.getBeanName());
 		
@@ -98,9 +124,11 @@ public abstract class GenericScopedBeanFactory
 		
 		final String name = definition.getBeanName();
 		if( !singletons.containsKey(name) ) {
-			LOGGER.debug("Instantiating and registering singleton of type {} under name '{}'.", 
-				definition.getType().getName(), name);
 			
+			if( LOGGER.isDebugEnabled() ) {
+				LOGGER.debug("Instantiating and registering singleton of type {} under name '{}'.", 
+						definition.getType().getName(), name);
+			}
 			singletons.put(name, newInstance(definition));
 		}
 		
@@ -134,9 +162,10 @@ public abstract class GenericScopedBeanFactory
 	
 	protected <T> void handleWiredFields(T instance) {
 		for(Field field : BeanDefinitionUtils.findWiredFields(instance.getClass())) {
+			
+			BeanDefinition<?> definition;
 			try {
-
-				BeanDefinition<?> definition;
+				
 				final Alias alias = field.getAnnotation(Alias.class);
 				if(alias != null) {
 					definition = getBeanDefinitionFor(alias.value());
@@ -149,18 +178,10 @@ public abstract class GenericScopedBeanFactory
 				field.set(instance, getInstanceFor(definition));
 				field.setAccessible(wasAccessible);
 				
-			} catch (Exception e) {
-				LOGGER.error("Failed to handle wired fields");
+			} catch (Throwable t) {
+				throw new BeanFactoryException("Failed to inject @Wired fields for bean of type", t);
 			}
 		}
-	}
-	
-	protected BeanDefinition<?> getBeanDefinitionFor(final AnnotatedElement element){
-//		TODO
-//		final Alias a = element.getAnnotation(Alias.class);
-//		return (a != null) ? getBeanDefinitionFor(a.value()) : 
-//					getBeanDefinitionFor(p.getType());
-		return null;
 	}
 	
 	protected List<Object> getParameterInstancesForBeanConstruction(Parameter[] parameters){
@@ -226,7 +247,12 @@ public abstract class GenericScopedBeanFactory
 
 	protected Object handleBeanFactoryAware(Object object) {
 		if(object instanceof BeanFactoryAware) {
-			LOGGER.debug("Injecting BeanFactory to the BeanFactoryAware object of type {}", object.getClass());
+			
+			if( LOGGER.isDebugEnabled() ) {
+				LOGGER.debug("Injecting BeanFactory to the BeanFactoryAware bean of type {}", 
+						object.getClass().getSimpleName());
+			}
+			
 			((BeanFactoryAware) object).setBeanFactory(this);
 		}
 		return object;
@@ -245,9 +271,9 @@ public abstract class GenericScopedBeanFactory
 					.newInstance(this, beanDefinition);
 			
 		} catch(ClassNotFoundException e) {
-			throw new BeanFactoryException("RequestContextInvocationHandler is not found on classpath. "
-					+ " Cannot instantiate a proxy for a web-scoped bean "+ 
-						beanDefinition.getBeanName());
+			throw new BeanFactoryException(
+					"RequestContextInvocationHandler (from essential-web module) is not found on classpath. "
+					+ "Cannot instantiate a proxy for a web-scoped bean "+ beanDefinition.getBeanName());
 
 		} catch(Throwable t) {
 			throw new BeanFactoryException("Cannot instantiate a RequestContextInvocationHandler proxy for "

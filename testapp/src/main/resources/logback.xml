@@ -6,7 +6,7 @@
   </appender>
  
  
- <logger name="org.essentialframework" level="trace" ></logger>
+ <logger name="org.essentialframework" level="info" ></logger>
  
   <root level="warn">
     <appender-ref ref="STDOUT" />

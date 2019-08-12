@@ -113,7 +113,7 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 			
 		} catch(Throwable e) {
 			//TODO
-			LOGGER.error("Servlet error: {}",e);
+			LOGGER.error("Failure while handling request" , e);
 			throw e;
 			
 		} finally {
