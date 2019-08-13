@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.essentialframework.core.annotation.Alias;
-import org.essentialframework.core.utility.Assert;
 import org.essentialframework.web.databind.DefaultRequestContextMethodArgumentBinder;
 import org.essentialframework.web.databind.MethodArgumentBinder;
 
@@ -39,6 +38,10 @@ import org.essentialframework.web.databind.MethodArgumentBinder;
  * @version 1.0
  */
 public class AnnotatedHandlerMethod implements HandlerMethod {
+	
+	private HttpMethod httpMethod;
+	
+	private String uri;
 	
 	private String methodOwnerName;
 	
@@ -52,13 +55,9 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 	
 	private MethodArgumentBinder argumentBinder;
 	
-	static AnnotatedHandlerMethod of(final Method method) {
-		Assert.notNull(method, "Method cannot be null");
-		return new AnnotatedHandlerMethod(method);
-		
-	}
-	
-	private AnnotatedHandlerMethod(final Method method) {
+	AnnotatedHandlerMethod(final HttpMethod httpMethod, final String uri, final Method method) {
+		this.httpMethod = httpMethod;
+		this.uri = uri;
 		this.method = method;
 		this.methodOwnerType = this.method.getDeclaringClass();
 		if(this.methodOwnerType.isAnnotationPresent(Alias.class)) {
@@ -129,4 +128,20 @@ public class AnnotatedHandlerMethod implements HandlerMethod {
 		return this.argumentBinder;
 	}
 
+	public HttpMethod getHttpMethod() {
+		return httpMethod;
+	}
+
+	public String getUri() {
+		return uri;
+	}
+
+	public void setHttpMethod(HttpMethod httpMethod) {
+		this.httpMethod = httpMethod;
+	}
+
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
+	
 }

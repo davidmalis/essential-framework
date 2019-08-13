@@ -54,6 +54,9 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 	
 	public static final String BEAN_FACTORY_ATTRIBUTE = 
 		DelegatingServlet.class.getName() + ".beans.beanfactory";
+	
+	public static final String HANDLER_METHOD_ATTRIBUTE =
+		DelegatingServlet.class.getName()+ ".handlerMethod";
 
 	private BeanFactory beanFactory;
 	
@@ -106,6 +109,7 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 		
 		RequestContextHolder.setRequestContext(new ServletRequestContext(request, response));
 		registerBeanFactory(request);
+		registerHandlerMethod(request, handler);
 		
 		try {
 			
@@ -184,5 +188,12 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 			request.setAttribute(BEAN_FACTORY_ATTRIBUTE, this.beanFactory);
 		}
 	}
+	
+	private void registerHandlerMethod(ServletRequest request, HandlerMethod handlerMethod) {
+		if(handlerMethod != null) {
+			request.setAttribute(HANDLER_METHOD_ATTRIBUTE, handlerMethod);
+		}
+	}
+	
 	
 }

@@ -30,10 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.essentialframework.core.initialization.BeanFactory;
+import org.essentialframework.core.initialization.TargetAwareProxy;
 import org.essentialframework.web.databind.MethodArgumentBinder;
 
 public class AnnotatedHandlerMethodInvocationHandler 
-	implements InvocationHandler {
+	implements InvocationHandler, TargetAwareProxy {
 	
 	private BeanFactory beanFactory;
 	
@@ -85,29 +86,10 @@ public class AnnotatedHandlerMethodInvocationHandler
 		
 		
 	}
-	
-	
-//	List<Object> bindArguments(HttpServletRequest request, HttpServletResponse response, AnnotatedHandlerMethod handlerMethod){
-//		
-//		final List<Object> boundArguments = new ArrayList<>();
-//		for(Parameter parameter : handlerMethod.getParameters()) {
-//			if(HttpServletRequest.class.equals(parameter.getType())) {
-//				boundArguments.add(request);
-//			}
-//			else if(HttpServletResponse.class.equals(parameter.getType())) {
-//				boundArguments.add(response);
-//			} else {
-//				boundArguments.add(null);
-//			}
-//		}
-//		return boundArguments;
-//		
-//	}
-//	
-//	
-	
-	
-	
-	
 
+	@Override
+	public Object getActualTarget() {
+		return this.handlerMethod;
+	}
+	
 }

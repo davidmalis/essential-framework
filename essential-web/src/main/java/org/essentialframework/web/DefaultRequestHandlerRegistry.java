@@ -89,7 +89,7 @@ public class DefaultRequestHandlerRegistry implements RequestHandlerRegistry<Han
 					}
 					throw new AmbiguousHandlerException("Ambigiuous request handler found for url: "+url);
 				}
-				urlMap.put(url, AnnotatedHandlerMethod.of(method));
+				urlMap.put(url, new AnnotatedHandlerMethod(httpMethod, url, method));
 			}
 		}
 		
@@ -105,7 +105,21 @@ public class DefaultRequestHandlerRegistry implements RequestHandlerRegistry<Han
 		
 		final Map<String, HandlerMethod> urlMap = handlers.get(httpMethod);
 		if(urlMap != null) {
-			final HandlerMethod method = urlMap.get(url);
+			
+			HandlerMethod method = null;
+			
+			for(Map.Entry<String, HandlerMethod> urlMapEntry : urlMap.entrySet()) {
+				final String declaredUrl = urlMapEntry.getKey();
+				final PathVariableResolver pathVariableResolver = 
+						PathVariableResolver.parse(declaredUrl);
+				
+				if( pathVariableResolver.matches(url) ) {
+					method = urlMapEntry.getValue();
+					break;
+				}
+			}
+			
+			
 			if(method != null) {
 				return createProxyHandler(method);
 			}

@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
  * @author David Malis
  * @since 1.0
  */
-public abstract class AbstractTargetAwareInvocationHandler {
+public abstract class AbstractTargetAwareInvocationHandler implements TargetAwareProxy {
 
 	protected Object target;
 	
@@ -43,6 +43,10 @@ public abstract class AbstractTargetAwareInvocationHandler {
 		this.target = target;
 	}
 	
+	public Object getActualTarget() {
+		return target;
+	}
+
 	/**
 	 * Should be implemented by concrete implementations 
 	 * which can then be used to wrap target instances 

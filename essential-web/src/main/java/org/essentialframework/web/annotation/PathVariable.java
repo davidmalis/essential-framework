@@ -1,6 +1,6 @@
 /* MIT License
 *
-* Copyright (c) 2019 David Mališ
+* Copyright (c) 2018 David Mališ
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,19 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package org.essentialframework.web.utility;
+package org.essentialframework.web.annotation;
 
-import org.essentialframework.core.initialization.BeanFactory;
-import org.essentialframework.web.DelegatingServlet;
-import org.essentialframework.web.RequestContext;
-import org.essentialframework.web.RequestContextHolder;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class WebUtils {
-
-	public static BeanFactory findBeanFactory() {
-		final RequestContext context = RequestContextHolder.currentRequestContext();
-		BeanFactory beanFactory = null;
-		if(context != null) {
-			beanFactory = (BeanFactory) context.getRequest()
-				.getAttribute(DelegatingServlet.BEAN_FACTORY_ATTRIBUTE);
-		}
-		return beanFactory;
-	}
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.PARAMETER})
+public @interface PathVariable {
 	
-	private WebUtils() {}
+	String value();
+
 }

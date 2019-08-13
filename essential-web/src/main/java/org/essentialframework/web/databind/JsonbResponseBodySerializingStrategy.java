@@ -43,6 +43,9 @@ public class JsonbResponseBodySerializingStrategy
 		
 		Assert.notNull(response, "Cannot serialize payload to a null response");
 		
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json; charset=UTF-8");
+		
 		if(payload != null) {
 
 			PrintWriter writer = null;

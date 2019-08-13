@@ -27,7 +27,8 @@ public final class WebContextParameterBinderChainFactory {
 	public static WebContextParameterBinder createDefaultChain() {
 		return createChain(
 			new GeneralWebContextParameterBinder(), 
-			new BeanFactoryWebContextParameterBinder(), 
+			new BeanFactoryWebContextParameterBinder(),
+			new PathVariableWebContextParameterBinder(),
 			new RequestParameterWebContextParameterBinder(),
 			new RequestBodyWebContextParameterBinder());
 	}
