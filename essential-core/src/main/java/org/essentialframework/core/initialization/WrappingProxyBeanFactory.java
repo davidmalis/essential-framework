@@ -145,7 +145,7 @@ public abstract class WrappingProxyBeanFactory
 			
 			return target;
 		}
-		Object wrapper = null;
+		Object wrapper = target;
 		for(Class<? extends AbstractTargetAwareInvocationHandler> handlerType : handlerTypes) {
 
 			if( LOGGER.isTraceEnabled() ) {
@@ -156,7 +156,8 @@ public abstract class WrappingProxyBeanFactory
 			wrapper = Proxy.newProxyInstance(
 				Thread.currentThread().getContextClassLoader(),
 				definition.getInterfaces(), 
-				createHandler(handlerType, target));
+				createHandler(handlerType, wrapper));
+			
 		}
 		return (T) wrapper;
 	}

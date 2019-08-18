@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @since 1.0
  */
 public class MethodInvocationLoggingHandler 
-	extends AbstractTargetAwareInvocationHandler implements InvocationHandler {
+	extends AbstractTargetAwareInvocationHandler implements InvocationHandler, TargetAwareProxy {
 
 	private static final Logger LOGGER 
 		= LoggerFactory.getLogger(MethodInvocationLoggingHandler.class);

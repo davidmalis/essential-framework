@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
  */
 public class TransactionalInvocationHandler 
 	extends AbstractTargetAwareInvocationHandler 
-		implements InvocationHandler {
+		implements InvocationHandler, TargetAwareProxy {
 
 	//TransactionContext tc;
 	

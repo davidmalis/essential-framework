@@ -58,24 +58,28 @@ public class AnnotatedHandlerMethodInvocationHandler
 		
 		Object handlerMethodInvocationResult;
 		final Class<?> handlerMethodOwnerType = handlerMethod.getMethodOwnerType();
-		final Object handlerMethodOwner = beanFactory.getBean(handlerMethodOwnerType);
+		Object handlerMethodOwner = beanFactory.getBean(handlerMethodOwnerType);
 		
 		Object[] boundArguments = argumentBinder.bind();
+		
+		if(Proxy.isProxyClass(handlerMethodOwner.getClass())){
 
-		/* NOTE:
-		 * At this point, if we are already dealing with the proxy
-		 * served from the bean factory, workaround is to pass the 
-		 * call on to the next invocation handler, else 
-		 * do the usual invocation on the direct instance.
-		 */
-		if(Proxy.isProxyClass(handlerMethodOwner.getClass())) {
+			/*
+			 * NOTE:
+			 * This is a temporary workaround.
+			 */
+			InvocationHandler invocationHandler = unwrapTargetAwareProxies(handlerMethodOwner);
+			if(invocationHandler == null) {
+				//TODO better explain.
+				throw new RuntimeException("Cannot invoke handler method.");
+			}
 			
-			handlerMethodInvocationResult = Proxy.getInvocationHandler(handlerMethodOwner).invoke(handlerMethodOwner, 
-				handlerMethod.getMethod(), boundArguments);
+			handlerMethodInvocationResult = invocationHandler.invoke(
+				handlerMethodOwner, handlerMethod.getMethod(), boundArguments);
 			
 		} else {
 			handlerMethodInvocationResult = handlerMethod.getMethod().invoke(
-				handlerMethodOwner,	boundArguments);
+					handlerMethodOwner,	boundArguments);
 		}
 
 		responseWriter.setPayload(handlerMethodInvocationResult);
@@ -90,6 +94,26 @@ public class AnnotatedHandlerMethodInvocationHandler
 	@Override
 	public Object getActualTarget() {
 		return this.handlerMethod;
+	}
+	
+	private InvocationHandler unwrapTargetAwareProxies(Object object) {
+
+		Object actualTarget = object;
+		InvocationHandler handler = null;
+		
+		while(Proxy.isProxyClass(actualTarget.getClass())) {
+			handler = Proxy.getInvocationHandler(actualTarget);
+			if(handler instanceof RequestContextInvocationHandler) {
+				return handler;
+			} else if(handler instanceof TargetAwareProxy) {
+				actualTarget = ((TargetAwareProxy)handler).getActualTarget();
+				continue;
+			}
+			
+		}
+		
+		return handler;
+		
 	}
 	
 }

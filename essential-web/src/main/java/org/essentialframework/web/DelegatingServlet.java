@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.essentialframework.core.initialization.BeanFactory;
 import org.essentialframework.core.initialization.BeanFactoryAware;
 import org.essentialframework.core.utility.Assert;
+import org.essentialframework.web.utility.NestedServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,11 +104,13 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 	 * @param request
 	 * @param response
 	 * @param handler
+	 * @throws NestedServletException 
 	 */
-	private void delegate(HttpServletRequest request,
-			HttpServletResponse response, HandlerMethod handler) {
+	private void delegate(HttpServletRequest request, HttpServletResponse response, 
+		HandlerMethod handler) throws NestedServletException {
 		
 		RequestContextHolder.setRequestContext(new ServletRequestContext(request, response));
+		
 		registerBeanFactory(request);
 		registerHandlerMethod(request, handler);
 		
@@ -115,10 +118,9 @@ public class DelegatingServlet extends HttpServlet implements BeanFactoryAware {
 			
 			handler.handle(request, response);
 			
-		} catch(Throwable e) {
-			//TODO
-			LOGGER.error("Failure while handling request" , e);
-			throw e;
+		} catch(Throwable t) {
+			LOGGER.error("Failure while handling request" , t);
+			throw new NestedServletException("Request processing failed", t);
 			
 		} finally {
 			RequestContextHolder.reset();

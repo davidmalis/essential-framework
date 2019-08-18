@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.essentialframework.core.annotation.Controller;
+import org.essentialframework.core.initialization.BeanFactory;
 import org.essentialframework.web.HttpMethod;
 import org.essentialframework.web.annotation.PathVariable;
 import org.essentialframework.web.annotation.RequestHandler;
 
 @Controller
 public class CommonController {
+
+	private BeanFactory beanFactory;
 	
 	@RequestHandler(method = HttpMethod.GET, url = "/persons")
 	public List<Person> getPersonList() {
@@ -29,6 +32,14 @@ public class CommonController {
 		users.add(new Person(3L, "Ivo", "Ivić", 27));
 		users.add(new Person(4L, "Ana", "Anić", 25));
 		return users;
+	}
+
+	public BeanFactory getBeanFactory() {
+		return this.beanFactory;
+	}
+
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
 	}
 	
 

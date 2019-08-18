@@ -22,6 +22,10 @@
 */
 package org.essentialframework.web.embedded.jetty;
 
+import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.SessionIdManager;
 import org.eclipse.jetty.server.session.DefaultSessionIdManager;
@@ -31,6 +35,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.essentialframework.core.initialization.AnnotationBasedBeanFactory;
 import org.essentialframework.core.initialization.BeanFactory;
 import org.essentialframework.web.DelegatingServlet;
+import org.essentialframework.web.StaticResourcesFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,30 +44,39 @@ public class Runner {
 	public static final Logger LOGGER =
 		LoggerFactory.getLogger(Runner.class);
 	
-	public static Server run(int port) throws Exception {
-		return run(port, new AnnotationBasedBeanFactory(false));
+	public static void run(int port) throws Exception {
+		run(port, new AnnotationBasedBeanFactory(false));
 	}
 	
-	public static Server run(int port, BeanFactory context) throws Exception {
+	public static void run(int port, BeanFactory context) throws Exception {
 		
 		final long start = System.currentTimeMillis();
 		LOGGER.warn("Starting embedded Jetty on port {}", port);
 		
 		final Server server = new Server(port);
-		
-		final ServletHandler servletHandler = new ServletHandler();
-		servletHandler.addServletWithMapping(new ServletHolder(
-	        	new DelegatingServlet(context)), "/*");
-		
-		server.setHandler(servletHandler);
+		final ServletHandler servletHandler = 
+				enableFrontController(server, context);
 		
 		enableSessionManagement(server, servletHandler);
+		enableStaticResourcesServing(server, servletHandler);
         
         server.start();
         LOGGER.warn("Application started in {} ms.", System.currentTimeMillis()-start);
         
         server.join();
-        return server;
+	}
+	
+	private static ServletHandler enableFrontController(Server server, BeanFactory context) {
+		final ServletHandler servletHandler = new ServletHandler();
+		servletHandler.addServletWithMapping(new ServletHolder(
+	        	new DelegatingServlet(context)), "/*");
+		server.setHandler(servletHandler);
+		return servletHandler;
+	}
+	
+	private static void enableStaticResourcesServing(Server server, ServletHandler servletHandler) {
+		servletHandler.addFilterWithMapping(StaticResourcesFilter.class, "/static/*", 
+			EnumSet.of(DispatcherType.REQUEST));
 	}
 	
 	private static void enableSessionManagement(Server server, ServletHandler servletHandler) {
