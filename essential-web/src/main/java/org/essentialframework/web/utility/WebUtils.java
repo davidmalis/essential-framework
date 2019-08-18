@@ -22,6 +22,10 @@
 */
 package org.essentialframework.web.utility;
 
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.essentialframework.core.initialization.BeanFactory;
 import org.essentialframework.web.DelegatingServlet;
 import org.essentialframework.web.RequestContext;
@@ -38,6 +42,17 @@ public class WebUtils {
 		}
 		return beanFactory;
 	}
+	
+	public static String getBaseUrl(HttpServletRequest request) {
+	   StringBuilder sb = new StringBuilder(request.getScheme())
+		   .append("://")
+		   .append(request.getServerName())
+		   .append(":")
+		   .append(request.getServerPort())
+		   .append(Optional.ofNullable(request.getContextPath()).orElse(""));
+		return sb.toString();
+	}
+	
 	
 	private WebUtils() {}
 }

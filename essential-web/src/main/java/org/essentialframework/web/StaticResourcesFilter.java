@@ -22,9 +22,12 @@
 */
 package org.essentialframework.web;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,8 +35,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.essentialframework.web.utility.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,38 +53,64 @@ public class StaticResourcesFilter implements Filter {
 
 		final String path = getRequestedResourcePath(request);
 		
-		try ( InputStream resource = this.classLoader.getResourceAsStream(path);
-			  OutputStream output = response.getOutputStream(); ){
+		final URL resource = this.classLoader.getResource(path);
+		final BaseUrlVariableProcessor baseUrlVariableProcessor = 
+			new BaseUrlVariableProcessor((HttpServletRequest) request);
+		
+		if(resource != null) {
 			
-			if(resource != null && output != null) {
-				byte[] buffer = new byte[1024];
-			    int length;
-			    while((length = resource.read(buffer)) > 0){
-			    	output.write(buffer, 0, length);
-			    }
-			    output.flush();
-			    
-			    if( LOGGER.isDebugEnabled() ) {
-					LOGGER.debug("Served '{}' from static resources.	", path);
-				}
-			    
-			} else {
-				if( LOGGER.isDebugEnabled() ) {
-					LOGGER.debug("Cannot find '{}' amongst static resources. "
-						+ "Letting request further down the filter chain.", path);
+			try ( BufferedReader in = new BufferedReader(
+					new InputStreamReader(resource.openStream()));
+				  PrintWriter out = response.getWriter() ) {
+
+				for(String line;(line=in.readLine())!= null;) {
+					line = baseUrlVariableProcessor.process(line);
+				    out.println(line);
 				}
 				
-				chain.doFilter(request, response);
+				out.flush();
+				
+				if( LOGGER.isDebugEnabled() ) {
+					LOGGER.debug("Served '{}' from static resources.", path);
+				}
 			}
 			
-		} catch(IOException e) {
-			LOGGER.error("Error while loading static resource", e);
-			((HttpServletResponse) response).sendError(500, "Error while loading resource.");
+		} else {
+			if( LOGGER.isDebugEnabled() ) {
+				LOGGER.debug("Cannot find '{}' amongst static resources. "
+					+ "Letting request further down the filter chain.", path);
+			}
+			chain.doFilter(request, response);
 		}
+		
 	}
 	
 	private static String getRequestedResourcePath(ServletRequest request) {
 		return ((HttpServletRequest) request).getPathInfo().replaceAll("^/+", "");
+	}
+	
+	/**
+	 * Simple variable injector.
+	 * 
+	 * Replaces all occurences of ${base.url} in the static resource
+	 * with the actual value determined from the HttpServletRequest.
+	 */
+	private static class BaseUrlVariableProcessor {
+
+		private HttpServletRequest request;
+		
+		private BaseUrlVariableProcessor(HttpServletRequest request) {
+			this.request = request;
+		}
+		
+		private String process(String line) {
+			if(line != null) {
+				line = line.replaceAll(Pattern.quote("${base.url}"), 
+					WebUtils.getBaseUrl(this.request));
+			}
+			return line;
+		}
+		
 	}
 
 }
