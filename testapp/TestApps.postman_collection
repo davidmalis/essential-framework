@@ -1,0 +1,497 @@
+{
+	"info": {
+		"_postman_id": "7f088280-d8ea-493e-acae-a9dc8b5f53f1",
+		"name": "Essential Framework",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "TodoApplication",
+			"item": [
+				{
+					"name": "/lists",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/lists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/lists/add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\":\"Nova To-Do lista\"}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/lists/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lists",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/list/{id}/items",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/list/b31fb333-f4c5-484f-8b55-bff5d7061e94/items",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"list",
+								"b31fb333-f4c5-484f-8b55-bff5d7061e94",
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/list/{id}/items/starred",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/list/b31fb333-f4c5-484f-8b55-bff5d7061e94/items/starred",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"list",
+								"b31fb333-f4c5-484f-8b55-bff5d7061e94",
+								"items",
+								"starred"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/list/{id}/items/completed",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/list/b31fb333-f4c5-484f-8b55-bff5d7061e94/items/completed",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"list",
+								"b31fb333-f4c5-484f-8b55-bff5d7061e94",
+								"items",
+								"completed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/items/starred",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/items/starred",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items",
+								"starred"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/items/completed",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/items/completed",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items",
+								"completed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/list/{id}/items/add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\":\"Nova stavka\", \"description\":\"Ovo je opis nove To-Do stavke\", \"itemListId\":\"b31fb333-f4c5-484f-8b55-bff5d7061e94\"}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/list/b31fb333-f4c5-484f-8b55-bff5d7061e94/items/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"list",
+								"b31fb333-f4c5-484f-8b55-bff5d7061e94",
+								"items",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/item/{id}/starred",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/item/72c677d7-6ba5-45d1-8e73-ae492a2c96ca/starred",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"item",
+								"72c677d7-6ba5-45d1-8e73-ae492a2c96ca",
+								"starred"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/item/{id}/completed",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/item/72c677d7-6ba5-45d1-8e73-ae492a2c96ca/completed",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"item",
+								"72c677d7-6ba5-45d1-8e73-ae492a2c96ca",
+								"completed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/list/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/list/186221d9-59c8-4243-b95e-dced8eb619a8/delete",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"list",
+								"186221d9-59c8-4243-b95e-dced8eb619a8",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/item/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/item/c87f2557-79a5-41f5-b880-b8f75a373b4d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"item",
+								"c87f2557-79a5-41f5-b880-b8f75a373b4d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/search/list/{id}/items",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/search/list/b31fb333-f4c5-484f-8b55-bff5d7061e94/items?name=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"search",
+								"list",
+								"b31fb333-f4c5-484f-8b55-bff5d7061e94",
+								"items"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/search/lists",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/search/list/b31fb333-f4c5-484f-8b55-bff5d7061e94/items?name=stavka",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"search",
+								"list",
+								"b31fb333-f4c5-484f-8b55-bff5d7061e94",
+								"items"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "stavka"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

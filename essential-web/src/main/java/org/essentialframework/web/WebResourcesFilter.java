@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -40,59 +41,67 @@ import org.essentialframework.web.utility.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StaticResourcesFilter implements Filter {
+public class WebResourcesFilter implements Filter {
 	
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(StaticResourcesFilter.class);
+		LoggerFactory.getLogger(WebResourcesFilter.class);
 	
-	private ClassLoader classLoader = StaticResourcesFilter.class.getClassLoader();
+	private static final String STATIC = "static";
+	
+	private ClassLoader classLoader = WebResourcesFilter.class.getClassLoader();
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		final String path = getRequestedResourcePath(request);
+		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		
-		final URL resource = this.classLoader.getResource(path);
-		final BaseUrlVariableProcessor baseUrlVariableProcessor = 
-			new BaseUrlVariableProcessor((HttpServletRequest) request);
+		final URL resource = this.classLoader.getResource(getRequestedResourcePath(httpRequest));
 		
 		if(resource != null) {
-			
-			try ( BufferedReader in = new BufferedReader(
-					new InputStreamReader(resource.openStream()));
+			try ( BufferedReader in = new BufferedReader(new InputStreamReader(
+					resource.openStream(), StandardCharsets.UTF_8));
 				  PrintWriter out = response.getWriter() ) {
 
 				for(String line;(line=in.readLine())!= null;) {
-					line = baseUrlVariableProcessor.process(line);
-				    out.println(line);
+
+					if(!isStatic(resource)) {
+						line = new BaseUrlVariableProcessor(httpRequest).process(line);
+					}
+				   
+					out.println(line);
 				}
 				
 				out.flush();
 				
 				if( LOGGER.isDebugEnabled() ) {
-					LOGGER.debug("Served '{}' from static resources.", path);
+					LOGGER.debug("Served '{}' from "+ (isStatic(resource)?"static":"") 
+							+" static web resources.", resource);
 				}
 			}
 			
 		} else {
 			if( LOGGER.isDebugEnabled() ) {
-				LOGGER.debug("Cannot find '{}' amongst static resources. "
-					+ "Letting request further down the filter chain.", path);
+				LOGGER.debug("Cannot find '{}' amongst web resources. "
+					+ "Letting request further down the filter chain.", resource);
 			}
 			chain.doFilter(request, response);
 		}
 		
 	}
 	
-	private static String getRequestedResourcePath(ServletRequest request) {
-		return ((HttpServletRequest) request).getPathInfo().replaceAll("^/+", "");
+	private static String getRequestedResourcePath(HttpServletRequest request) {
+		return request.getPathInfo().replaceAll("^/+", "");
+	}
+	
+	private static boolean isStatic(URL resource) {
+		return resource.toString().contains(STATIC);
 	}
 	
 	/**
 	 * Simple variable injector.
 	 * 
-	 * Replaces all occurences of ${base.url} in the static resource
+	 * Replaces all occurences of ${base.url} in the non-static web resource
 	 * with the actual value determined from the HttpServletRequest.
 	 */
 	private static class BaseUrlVariableProcessor {

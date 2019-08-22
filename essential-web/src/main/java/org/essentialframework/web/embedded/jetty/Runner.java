@@ -35,7 +35,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.essentialframework.core.initialization.AnnotationBasedBeanFactory;
 import org.essentialframework.core.initialization.BeanFactory;
 import org.essentialframework.web.DelegatingServlet;
-import org.essentialframework.web.StaticResourcesFilter;
+import org.essentialframework.web.WebResourcesFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class Runner {
 				enableFrontController(server, context);
 		
 		enableSessionManagement(server, servletHandler);
-		enableStaticResourcesServing(server, servletHandler);
+		enableWebResourcesServing(server, servletHandler);
         
         server.start();
         LOGGER.warn("Application started in {} ms.", System.currentTimeMillis()-start);
@@ -74,8 +74,8 @@ public class Runner {
 		return servletHandler;
 	}
 	
-	private static void enableStaticResourcesServing(Server server, ServletHandler servletHandler) {
-		servletHandler.addFilterWithMapping(StaticResourcesFilter.class, "/static/*", 
+	private static void enableWebResourcesServing(Server server, ServletHandler servletHandler) {
+		servletHandler.addFilterWithMapping(WebResourcesFilter.class, "/web-resources/*", 
 			EnumSet.of(DispatcherType.REQUEST));
 	}
 	

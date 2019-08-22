@@ -75,7 +75,8 @@ SOFTWARE.
 	    <groupId>javax.json.bind</groupId>
 	    <artifactId>javax.json.bind-api</artifactId>
 	    <version>${javax.json.bind-api.version}</version>
-	</dependency>		    
+	</dependency>
+			    
 
   </dependencies>
   
