@@ -43,7 +43,7 @@ public class StringUtils {
 	public static boolean isEmpty(final String s) {
 		return s == null || s.length() <= 0;
 	}
-	
+		
 	/**
 	 * Checks if specified string contains some characters
 	 * other than whitespace.
@@ -60,6 +60,12 @@ public class StringUtils {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 */
+	public static boolean startsWith(final String s, final String prefix) {
+		return !isEmpty(s) && s.startsWith(prefix);
 	}
 	
 }

@@ -24,10 +24,15 @@ package org.essentialframework.web;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -37,6 +42,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.essentialframework.core.utility.StringUtils;
 import org.essentialframework.web.utility.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,49 +59,69 @@ public class WebResourcesFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-
+	
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
+		final Path resourcePath = getRequestedResourcePath(httpRequest);
 		
-		final URL resource = this.classLoader.getResource(getRequestedResourcePath(httpRequest));
-		
-		if(resource != null) {
-			try ( BufferedReader in = new BufferedReader(new InputStreamReader(
-					resource.openStream(), StandardCharsets.UTF_8));
-				  PrintWriter out = response.getWriter() ) {
-
-				for(String line;(line=in.readLine())!= null;) {
-
-					if(!isStatic(resource)) {
-						line = new BaseUrlVariableProcessor(httpRequest).process(line);
-					}
-				   
-					out.println(line);
-				}
-				
-				out.flush();
-				
-				if( LOGGER.isDebugEnabled() ) {
-					LOGGER.debug("Served '{}' from "+ (isStatic(resource)?"static":"") 
-							+" static web resources.", resource);
-				}
-			}
-			
-		} else {
+		final URL resource = this.classLoader.getResource(resourcePath.toString());
+		if(resource == null) {
 			if( LOGGER.isDebugEnabled() ) {
 				LOGGER.debug("Cannot find '{}' amongst web resources. "
 					+ "Letting request further down the filter chain.", resource);
 			}
 			chain.doFilter(request, response);
+			return;
+		}
+		
+		
+		if(isTextBasedMimeType(resourcePath)) {
+			
+			try ( BufferedReader in = new BufferedReader(new InputStreamReader(
+					resource.openStream(), StandardCharsets.UTF_8));
+					PrintWriter out = response.getWriter() ) {
+	
+				for(String line;(line=in.readLine())!= null;) {
+					if(!isStatic(resource)) {
+						line = new BaseUrlVariableProcessor(httpRequest).process(line);
+					}
+					out.println(line);
+				}
+				out.flush();
+				
+			}
+			
+		} else {
+			
+			try ( InputStream in = resource.openStream();
+					OutputStream out = response.getOutputStream() ){
+				
+				byte[] buffer = new byte[1024];
+				int length;
+				while((length = in.read(buffer)) > 0) {
+					out.write(buffer, 0, length);
+				}
+				out.flush();
+			}
+			
+		}
+		
+		if( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Served '{}' from "+ (isStatic(resource)?"static":"") 
+					+" static web resources.", resource);
 		}
 		
 	}
 	
-	private static String getRequestedResourcePath(HttpServletRequest request) {
-		return request.getPathInfo().replaceAll("^/+", "");
+	private static Path getRequestedResourcePath(HttpServletRequest request) {
+		return Paths.get(request.getPathInfo().replaceAll("^/+", ""));
 	}
 	
 	private static boolean isStatic(URL resource) {
 		return resource.toString().contains(STATIC);
+	}
+	
+	private static boolean isTextBasedMimeType(Path path) throws IOException {
+		return StringUtils.startsWith(Files.probeContentType(path), "text/");
 	}
 	
 	/**
