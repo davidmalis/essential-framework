@@ -23,6 +23,7 @@
 package org.essentialframework.web;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -42,7 +44,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.essentialframework.core.utility.StringUtils;
 import org.essentialframework.web.utility.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public class WebResourcesFilter implements Filter {
 		}
 		
 		
-		if(isTextBasedMimeType(resourcePath)) {
+		if(isTextualWebResource(resourcePath)) {
 			
 			try ( BufferedReader in = new BufferedReader(new InputStreamReader(
 					resource.openStream(), StandardCharsets.UTF_8));
@@ -107,7 +108,7 @@ public class WebResourcesFilter implements Filter {
 		
 		if( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Served '{}' from "+ (isStatic(resource)?"static":"") 
-					+" static web resources.", resource);
+					+" web resources.", resource);
 		}
 		
 	}
@@ -120,8 +121,31 @@ public class WebResourcesFilter implements Filter {
 		return resource.toString().contains(STATIC);
 	}
 	
-	private static boolean isTextBasedMimeType(Path path) throws IOException {
-		return StringUtils.startsWith(Files.probeContentType(path), "text/");
+	private static boolean isTextualWebResource(Path path) throws IOException {
+		String contentType = Files.probeContentType(path);
+		
+		if(contentType != null) {
+			return contentType.startsWith("text/") || 
+					contentType.contains("javascript") ||
+					contentType.contains("json") ||
+					contentType.contains("xml") || 
+					contentType.contains("rtf") || 
+					contentType.contains("css");
+			
+		} else {
+			//fallback to simple extension finding algorithm
+			String str = path.toString();
+			int separatorIndex = str.lastIndexOf(File.separator);
+			if(separatorIndex != -1) {
+				str = str.substring(separatorIndex+1);
+			} 
+			int extensionIndex = str.lastIndexOf(".");
+			if(extensionIndex != -1) {
+				str = str.substring(extensionIndex+1);
+			}
+			return Arrays.asList("txt", "html", "js", "css", "json", "xml", "md")
+					.contains(str);
+		}
 	}
 	
 	/**
