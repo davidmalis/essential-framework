@@ -46,24 +46,20 @@ public class JsonbResponseBodySerializingStrategy
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json; charset=UTF-8");
 		
-		if(payload != null) {
-
-			PrintWriter writer = null;
-			try {				
-				writer = response.getWriter();
-				writer.write(JsonbBuilder.create().toJson(payload));
+		try ( PrintWriter writer = response.getWriter() ){
+		
+			writer.write(
+					payload !=null? JsonbBuilder.create().toJson(payload): "{}"
+			);
+			writer.flush();
 				
-			} catch(JsonbException e) {
-				log.error("Error while serializing payload to json", e);
-			} catch (IOException e) {
-				log.error("Error while writing to response", e);
-			} finally {
-				if(writer != null) {
-					writer.flush();
-					writer.close();
-				}
-			}
-		}
+		} catch(JsonbException e) {
+			log.error("Error while serializing payload to json", e);
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			log.error("Error while writing to response", e);
+			throw new RuntimeException(e);
+		} 
 	}
 	
 }

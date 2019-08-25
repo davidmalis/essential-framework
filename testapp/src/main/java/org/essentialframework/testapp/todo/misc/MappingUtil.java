@@ -10,6 +10,7 @@ public class MappingUtil {
 	public static final ItemList map(ItemListDto itemListDto) {
 		final ItemList itemList = new ItemList();
 		itemList.setName(itemListDto.getName());
+		itemList.setDescription(itemListDto.getDescription());
 		itemList.setCreatedAt(LocalDateTime.now());
 		return itemList;
 	}
